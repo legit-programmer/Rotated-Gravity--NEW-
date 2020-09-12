@@ -13,19 +13,20 @@ pygame.display.set_caption('Rotated Gravity By Siddique Khan')
 FPS = 65 
 clock = pygame.time.Clock()
 
+main_font = pygame.font.Font('freesansbold.ttf', 32)
+
 thrust = False
 number_of_walls = 4
 wallx = []
-wally = []
+wally = [HEIGHT, HEIGHT+200, HEIGHT+400, HEIGHT+600]
+wally_final = wally.copy()
 
 def getWallStatus():
     global number_of_walls, wally, wallx
 
     for i in range(number_of_walls):
-        randomX = random.randrange(-250, -120)
-        randomY = random.randrange(250, HEIGHT)
+        randomX = random.randrange(-350, -150)
         wallx.append(randomX)
-        wally.append(randomY)
 
 getWallStatus()
 
@@ -55,40 +56,49 @@ class Player:
 
 
 class Wall:
-    def __init__(self, x1, y1):
-        self.x1 = x1
-        self.y1 = y1
-        self.vel = 10
-        self.offset = 125
+    def __init__(self):
+        self.vel = 2
+        self.offset = 200
         self.width1 = WIDTH-50
         self.height1 = 32
     
-    def draw(self):
-        wall1 = pygame.draw.rect(WIN, (255, 0, 0), (self.x1, self.y1, self.width1, self.height1))
-        wall2 = pygame.draw.rect(WIN, (255, 0, 0), (self.x1+(self.width1+self.offset), self.y1, self.width1, self.height1))
+    def draw(self, x, y):
+        wall1 = pygame.draw.rect(WIN, (255, 0, 0), (x, y, self.width1, self.height1))
+        wall2 = pygame.draw.rect(WIN, (255, 0, 0), (x+(self.width1+self.offset), y, self.width1, self.height1))
 
     def move(self):
-        pass
+        global wallx, wally, wally_final, number_of_walls
+
+        for i in range(number_of_walls):
+            w.draw(x=wallx[i], y=wally[i])
+            wally[i]-=w.vel
+            if wally[i] <= -32:
+                wally[i] = wally_final[i]
+            if i == 3:
+                if wally[i] <= -32:
+                    wally = wally_final.copy()
 
 
 p = Player()
-
-# for i in range(number_of_walls):
-#     print(wallx, wally)
-#     w = Wall(x1=wallx[i], y1=wally[i]+25)
+w = Wall()
     
     
 run = True
 
 def applyAllFuncs():
-    global w
+    global w, wallx, wally, wally_final
 
     p.draw()
     p.gravity()
     p.thrust()
-    # w.draw()
-    # w.x1-=w.vel
-    
+    w.move()
+
+def loseScreen():
+    global run
+
+    while not run:
+        pass
+
 
 def main():
     global run, thrust
