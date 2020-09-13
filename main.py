@@ -2,6 +2,7 @@ import pygame
 import random
 from pygame.locals import *
 import sys
+import os
 
 pygame.init()
 
@@ -11,6 +12,7 @@ WIDTH = 500
 HEIGHT = 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Rotated Gravity By Siddique Khan')
+pygame.display.set_icon(pygame.image.load(os.path.join('assets', 'logo.png')))
 
 # Framerate Initialization
 
