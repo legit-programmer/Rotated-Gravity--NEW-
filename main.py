@@ -19,8 +19,10 @@ clock = pygame.time.Clock()
 
 # Font Initialization
 
-main_font = pygame.font.Font('freesansbold.ttf', 32)
-# lose_font = main_font.render('You Lose')
+main_font = pygame.font.Font('freesansbold.ttf', 75)
+enter_font = pygame.font.Font('freesansbold.ttf', 32)
+lose_font = main_font.render('You Lose', True, (200, 0, 0))
+continue_font = enter_font.render('Press Enter To Continue', True, (97, 204, 142))
 
 # Global Variables
 
@@ -32,7 +34,9 @@ wall2 = None
 wallx = []
 wally = [HEIGHT, HEIGHT+200, HEIGHT+400, HEIGHT+600]
 wally_final = wally.copy()
+playerx_final = WIDTH/2 - 32/2
 run = True
+lose = False
 
 def getWallStatus():
     """
@@ -49,14 +53,15 @@ getWallStatus()
 
 class Player:
     def __init__(self):
-        self.x = WIDTH/2 - 32/2
+        self.x = playerx_final
         self.y = 120
         self.vel_thrust = 10
         self.vel_gravity = 10
+        self.color = (97, 114, 204)
 
     def draw(self):
         global player
-        player = pygame.draw.rect(WIN, (0, 0, 255), (self.x, self.y, 32, 32))
+        player = pygame.draw.rect(WIN, self.color, (self.x, self.y, 32, 32))
 
     def gravity(self):
         global thrust
@@ -79,16 +84,18 @@ class Wall:
         self.offset = 200
         self.width1 = WIDTH-50
         self.height1 = 32
+        self.color = (204, 46, 90)
     
     def draw(self, x, y):
         global wall1, wall2
 
-        wall1 = pygame.draw.rect(WIN, (255, 0, 0), (x, y, self.width1, self.height1))
-        wall2 = pygame.draw.rect(WIN, (255, 0, 0), (x+(self.width1+self.offset), y, self.width1, self.height1))
+        wall1 = pygame.draw.rect(WIN, self.color, (x, y, self.width1, self.height1))
+        wall2 = pygame.draw.rect(WIN, self.color, (x+(self.width1+self.offset), y, self.width1, self.height1))
 
     def checkCollision(self):
+        global lose
         if player.colliderect(wall1) or player.colliderect(wall2) or p.x <= 0 or p.x >= WIDTH-32:
-            print('collision detected')
+            lose = True
 
     def move(self):
         global wallx, wally, wally_final, number_of_walls
@@ -111,22 +118,27 @@ w = Wall()
     
 
 def loseScreen():
-    global run, FPS, lose_font
+    global run, FPS, lose_font, continue_font, lose, wally
 
-    while not run:
-        
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-        
-            if event.type == KEYDOWN:
-                if event.key == K_SPACE:
-                    run = False
-        
-        WIN.blit(lose_font, (HEIGHT/2 - lose_font.get_height()/2, WIDTH/2 - lose_font.get_width()/2))
-        pygame.display.update()
-        clock.tick(FPS)
+    if lose:
+        while lose:
+            
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+            
+                if event.type == KEYDOWN:
+                    if event.key == K_RETURN:
+                        lose = False
+                        wally = wally_final.copy()
+                        p.x = playerx_final
+            
+            WIN.blit(lose_font, (WIDTH/2-lose_font.get_width()/2, 175))
+            WIN.blit(continue_font, (WIDTH/2-continue_font.get_width()/2, 200+lose_font.get_height()+75))
+
+            pygame.display.update()
+            clock.tick(FPS)
 
 
     
@@ -141,6 +153,7 @@ def applyAllFuncs():
     p.gravity()
     p.thrust()
     w.move()
+    loseScreen()
 
 
 # Main Game Loop
@@ -156,7 +169,7 @@ def main():
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
-                sys.exit()
+                run = False
         
         keys = pygame.key.get_pressed()
 
