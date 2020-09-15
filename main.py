@@ -39,6 +39,7 @@ wally_final = wally.copy()
 playerx_final = WIDTH/2 - 32/2
 run = True
 lose = False
+score = 0
 
 def getWallStatus():
     """
@@ -52,6 +53,9 @@ def getWallStatus():
 
 getWallStatus()
 
+def blitScore():
+    score_font = enter_font.render(f'Score: {score}', True, (0, 0, 255))
+    WIN.blit(score_font, (10, 10)) 
 
 class Player:
     def __init__(self):
@@ -87,23 +91,32 @@ class Wall:
         self.width1 = WIDTH-50
         self.height1 = 32
         self.color = (204, 46, 90)
+        self.x = None
+        self.y = None
     
-    def draw(self, x, y):
+    def draw(self):
         global wall1, wall2
 
-        wall1 = pygame.draw.rect(WIN, self.color, (x, y, self.width1, self.height1))
-        wall2 = pygame.draw.rect(WIN, self.color, (x+(self.width1+self.offset), y, self.width1, self.height1))
+        wall1 = pygame.draw.rect(WIN, self.color, (self.x, self.y, self.width1, self.height1))
+        wall2 = pygame.draw.rect(WIN, self.color, (self.x+(self.width1+self.offset), self.y, self.width1, self.height1))
 
     def checkCollision(self):
-        global lose
+        global lose, score, score_font
         if player.colliderect(wall1) or player.colliderect(wall2) or p.x <= 0 or p.x >= WIDTH-32:
             lose = True
+        else:
+            if p.y == self.y:
+                score+=1
+                blitScore()
+                print(score)
 
     def move(self):
         global wallx, wally, wally_final, number_of_walls
 
         for i in range(number_of_walls):
-            w.draw(x=wallx[i], y=wally[i])
+
+            self.x, self.y = wallx[i], wally[i]
+            w.draw()
             wally[i]-=w.vel
 
             self.checkCollision() # This function is called as this is the loop where walls are generated,so this function will apply for every walls
@@ -117,10 +130,11 @@ class Wall:
 
 p = Player()
 w = Wall()
-    
+
+
 
 def loseScreen():
-    global run, FPS, lose_font, continue_font, lose, wally
+    global run, FPS, lose_font, continue_font, lose, wally, score
 
     if lose:
         while lose:
@@ -136,26 +150,28 @@ def loseScreen():
                         wally = wally_final.copy()
                         p.x = playerx_final
             
-            WIN.blit(lose_font, (WIDTH/2-lose_font.get_width()/2, 175))
+            WIN.blit(lose_font, (WIDTH/2-lose_font.get_width()/2, 100))
+            # WIN.blit(main_font.render(str(score), True, (0, 255, 0)), ())
             WIN.blit(continue_font, (WIDTH/2-continue_font.get_width()/2, 200+lose_font.get_height()+75))
+            
 
             pygame.display.update()
             clock.tick(FPS)
 
+        score = 0
 
-    
 
 def applyAllFuncs():
     """
     This function collects all the function and then call them together in the main game loop.
     """
-    global w, wallx, wally, wally_final
 
     p.draw()
     p.gravity()
     p.thrust()
     w.move()
     loseScreen()
+    blitScore()
 
 
 # Main Game Loop
