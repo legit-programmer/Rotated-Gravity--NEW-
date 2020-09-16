@@ -23,7 +23,7 @@ clock = pygame.time.Clock()
 
 main_font = pygame.font.Font('freesansbold.ttf', 75)
 enter_font = pygame.font.Font('freesansbold.ttf', 32)
-lose_font = main_font.render('You Lose', True, (200, 0, 0))
+lose_font = main_font.render('You Lose', True, (214, 72, 29))
 continue_font = enter_font.render('Press Enter To Continue', True, (97, 204, 142))
 
 # Global Variables
@@ -54,8 +54,19 @@ def getWallStatus():
 getWallStatus()
 
 def blitScore():
-    score_font = enter_font.render(f'Score: {score}', True, (0, 0, 255))
+    score_font = enter_font.render(f'SCORE: {score}', True, (32, 198, 214))
     WIN.blit(score_font, (10, 10)) 
+
+def blitHighscore():
+    hscore = int(open(os.path.join('data', 'HighScore.txt'), 'r').read())
+    if score > hscore:
+        hscore = open(os.path.join('data', 'HighScore.txt'), 'w')
+        hscore.write(str(score))
+        hscore.close()
+    WIN.blit(enter_font.render(f'HIGH SCORE: {hscore}', True, (255, 0, 0)), (WIDTH/2-enter_font.render(f'HIGH SCORE: {hscore}', True, (255, 0, 0)).get_width()/2, 200+lose_font.get_height()+75))
+        
+
+    
 
 class Player:
     def __init__(self):
@@ -101,14 +112,15 @@ class Wall:
         wall2 = pygame.draw.rect(WIN, self.color, (self.x+(self.width1+self.offset), self.y, self.width1, self.height1))
 
     def checkCollision(self):
-        global lose, score, score_font
+        global lose, score
+
         if player.colliderect(wall1) or player.colliderect(wall2) or p.x <= 0 or p.x >= WIDTH-32:
             lose = True
         else:
             if p.y == self.y:
                 score+=1
                 blitScore()
-                print(score)
+                
 
     def move(self):
         global wallx, wally, wally_final, number_of_walls
@@ -151,8 +163,10 @@ def loseScreen():
                         p.x = playerx_final
             
             WIN.blit(lose_font, (WIDTH/2-lose_font.get_width()/2, 100))
-            # WIN.blit(main_font.render(str(score), True, (0, 255, 0)), ())
-            WIN.blit(continue_font, (WIDTH/2-continue_font.get_width()/2, 200+lose_font.get_height()+75))
+            pygame.draw.rect(WIN, (229, 207, 86), (WIDTH/2-80/2,143+lose_font.get_height(), 80, 80))
+            WIN.blit(main_font.render(str(score), True, (255, 255, 255)), (WIDTH/2 - main_font.render(str(score), True, (255, 255, 255)).get_width()/2, 150+lose_font.get_height()))
+            blitHighscore()
+            WIN.blit(continue_font, (WIDTH/2-continue_font.get_width()/2, 250+lose_font.get_height()+75))
             
 
             pygame.display.update()
