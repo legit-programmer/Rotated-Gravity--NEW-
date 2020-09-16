@@ -1,3 +1,16 @@
+"""
+ROTATED GRAVITY NY SIDDIQUE KHAN
+
+WEBSITE:- https://hellocodersweb.herokuapp.com
+COVID-19 TRACKER BY ME:- https://tracks-covid.herokuapp.com
+FOLLOW ON INSTAGRAM:- https://www.instagram.com/programmer_py.sid
+FOLLOW ON TWITTER:- https://www.twitter.com/programmerpysid
+GITHUB:- https://www.github.com/programmer-py-sid
+
+Thank You :)
+"""
+
+
 import pygame
 import random
 from pygame.locals import *
