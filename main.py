@@ -19,6 +19,10 @@ pygame.display.set_icon(pygame.image.load(os.path.join('assets', 'logo.png')))
 FPS = 65 
 clock = pygame.time.Clock()
 
+# Images
+
+welc_img = pygame.image.load(os.path.join('assets','welcome.png'))
+
 # Font Initialization
 
 main_font = pygame.font.Font('freesansbold.ttf', 75)
@@ -40,6 +44,7 @@ playerx_final = WIDTH/2 - 32/2
 run = True
 lose = False
 score = 0
+welcome = True
 
 def getWallStatus():
     """
@@ -147,6 +152,24 @@ class Wall:
 p = Player()
 w = Wall()
 
+def welcScreen():
+    global welcome
+
+    if welcome:
+        while welcome:
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == KEYDOWN:
+                    if event.key == K_SPACE:
+                        welcome = False
+            
+            WIN.blit(welc_img, (0, 0))
+
+            pygame.display.update()
+            clock.tick(FPS)
+
 
 # Lose Screen
 
@@ -192,6 +215,7 @@ def applyAllFuncs():
     w.move()
     loseScreen()
     blitScore()
+    welcScreen()
 
 
 # Main Game Loop
