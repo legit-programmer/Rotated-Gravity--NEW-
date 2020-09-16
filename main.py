@@ -1,5 +1,5 @@
 """
-ROTATED GRAVITY NY SIDDIQUE KHAN
+ROTATED GRAVITY BY SIDDIQUE KHAN
 
 WEBSITE:- https://hellocodersweb.herokuapp.com
 COVID-19 TRACKER BY ME:- https://tracks-covid.herokuapp.com
