@@ -58,15 +58,19 @@ def blitScore():
     WIN.blit(score_font, (10, 10)) 
 
 def blitHighscore():
+    
     hscore = int(open(os.path.join('data', 'HighScore.txt'), 'r').read())
+    
     if score > hscore:
+        # File Handling Below:-
         hscore = open(os.path.join('data', 'HighScore.txt'), 'w')
         hscore.write(str(score))
         hscore.close()
-    WIN.blit(enter_font.render(f'HIGH SCORE: {hscore}', True, (255, 0, 0)), (WIDTH/2-enter_font.render(f'HIGH SCORE: {hscore}', True, (255, 0, 0)).get_width()/2, 200+lose_font.get_height()+75))
-        
-
+        hscore = int(open(os.path.join('data', 'HighScore.txt'), 'r').read())
     
+    hfont = enter_font.render(f'HIGH SCORE: {hscore}', True, (64, 101, 204))
+    WIN.blit(hfont, (WIDTH/2-hfont.get_width()/2, 200+lose_font.get_height()+75))
+        
 
 class Player:
     def __init__(self):
@@ -144,6 +148,7 @@ p = Player()
 w = Wall()
 
 
+# Lose Screen
 
 def loseScreen():
     global run, FPS, lose_font, continue_font, lose, wally, score
@@ -162,13 +167,14 @@ def loseScreen():
                         wally = wally_final.copy()
                         p.x = playerx_final
             
+            score_font = main_font.render(str(score), True, (255, 255, 255))
+
             WIN.blit(lose_font, (WIDTH/2-lose_font.get_width()/2, 100))
             pygame.draw.rect(WIN, (229, 207, 86), (WIDTH/2-80/2,143+lose_font.get_height(), 80, 80))
-            WIN.blit(main_font.render(str(score), True, (255, 255, 255)), (WIDTH/2 - main_font.render(str(score), True, (255, 255, 255)).get_width()/2, 150+lose_font.get_height()))
+            WIN.blit(score_font, (WIDTH/2 - score_font.get_width()/2, 150+lose_font.get_height()))
             blitHighscore()
             WIN.blit(continue_font, (WIDTH/2-continue_font.get_width()/2, 250+lose_font.get_height()+75))
             
-
             pygame.display.update()
             clock.tick(FPS)
 
